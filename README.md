@@ -9,9 +9,8 @@ HiCGen is a deep learning framework for predicting multiscale 3D genome organiza
 
 ## Key Features
 - **Multiscale Prediction**: Generate hierarchical contact maps (1 kb to 128 kb resolutions) from sequence and epigenetic signals.
-- **Cross-Cell Generalization**: Predict chromatin architecture for unseen cell types using cell-specific ATAC/CTCF profiles.
+- **Cross-Cell Generalization**: Predict chromatin architecture for unseen cell types using cell-specific ATAC-seq/ChIP-seq profiles.
 - **Perturbation Analysis**: Simulate structural changes caused by enhancer/promoter activation/silencing or CTCF boundary editing.
-- **Cancer Studies**: Model carcinogenesis-associated genome reorganization and identify pivotal regulatory elements.
 
 ## Installation
 
@@ -26,3 +25,27 @@ HiCGen is a deep learning framework for predicting multiscale 3D genome organiza
    ```bash
    git clone https://github.com/JasonWei2014/HiCGen.git
    cd HiCGen
+2. Install dependencies via conda:
+   ```bash
+   conda create -n hicgen python=3.9
+   conda activate hicgen
+   pip install -r requirements.txt
+   
+## Usage
+
+### Data Preparation
+1. Input Formats:
+DNA Sequence: genomic sequences were derived from the GRCh38/hg38 reference genome in hg38.fa format.
+Epigenetic Signals: preprocessed ATAC-seq/ChIP-seq in .bw (BigWig) format.
+Hi-C Data: normalized and zoomified contact matrices in .mcool format.
+
+2. Data preprocessing：
+see **Paper**: [Preprint/BioRxiv Link]()
+
+### Training process
+
+### Prediction
+
+
+## Contributing 
+Contributions are welcome! Open an issue or submit a pull request.
