@@ -5,7 +5,7 @@ HiCGen is a deep learning framework for predicting multiscale 3D genome organiza
 
 **Paper**: [Preprint/BioRxiv Link]() | **Demo Data**: [Example Inputs/Outputs](examples/)
 
-![HiCGen Overview](docs/overview.pdf)
+![HiCGen Overview](docs/overview.emf)
 
 ## Key Features
 - **Multiscale Prediction**: Generate hierarchical contact maps (1 kb to 128 kb resolutions) from sequence and epigenetic signals.
