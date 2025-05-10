@@ -19,7 +19,8 @@ HiCGen is a deep learning framework for predicting multiscale 3D genome organiza
 - PyTorch 2.0+
 - CUDA 11.7+ (GPU recommended)
 - PyTorch Lightning
-- [cooler](https://github.com/open2c/cooler), [pyBigWig](https://github.com/deeptools/pyBigWig)
+- [cooler](https://github.com/open2c/cooler), [cootools](https://github.com/open2c/cooltools)
+- [kipoiseq](https://github.com/kipoi/kipoiseq),[pyBigWig](https://github.com/deeptools/pyBigWig)
 
 ### Setup
 1. Clone this repository:
