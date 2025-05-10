@@ -31,7 +31,7 @@ HiCGen is a deep learning framework for predicting multiscale 3D genome organiza
    ```bash
    conda create -n hicgen python=3.9
    conda activate hicgen
-   pip install -r requirements.txt
+   conda env update -f requirements.txt
    
 ## Usage
 
