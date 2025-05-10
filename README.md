@@ -47,7 +47,7 @@ see **Paper**:  [BioRxiv Preprint](https://www.biorxiv.org/)
 - HiCGen surpports command-line-interface for training and inference. For training on a new cell type, just execute the commands below in a terminal:
    ```bash
    python train.py --save_path checkpoints --data-root ../data --celltype IMR90 --fold fold1 --pred-mode SwinT4M --batch-size 4 --num-workers 4 --num-gpu 1
-Here the ``--celltype`` parameter specifies the filename that contains genomic features and contact maps of the training cell. The ``--fold`` parameter specifies training/validating/test sets within the fold.txt file. Currently we support two types of ``--pred-mode``: i.e. SwinT4M and SwinT32M. We recommand training SwinT32M based on the checkpoints of SwinT4M.
+Here the ``--celltype`` parameter specifies the filename that contains genomic features and contact maps of the training cell. The ``--fold`` parameter specifies training/validating/test sets within the fold.txt file. Currently we support two types of ``--pred-mode``: i.e. SwinT4M and SwinT32M. SwinT32M should be trained based on the checkpoints of a pre-trained SwinT4M model.
 
 ### Prediction
 - For predictions, execute the commands below in a terminal:
