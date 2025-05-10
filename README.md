@@ -53,4 +53,3 @@ Here the ``--celltype`` parameter specifies the filename that contains genomic f
 - For predictions, execute the commands below in a terminal:
    ```bash
    python prediction.py --celltype IMR90 --chr chr15 --start 71000000 --model checkpoints/models/tmp.ckpt 
-
