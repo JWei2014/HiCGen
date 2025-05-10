@@ -91,20 +91,4 @@ class HiCData_withoutCG(HiCData):
         hic_mat =self.hic.matrix(balance='obj_weight').fetch(*query).astype(np.float32)
         return hic_mat
 
-"""
-chrom = 'chr1'
-# gene_tss = 11189288
-gene_tss = 100_000
-gene_name = 'ANGPTL7'
-max_seq_len=200_000
-fasta_path = '../data/hg38.fa'
 
-my_seq = SequenceData(fasta_path)
-start_time = time.time()
-target_interval = kipoiseq.Interval(chrom, int(gene_tss-max_seq_len/2), int(gene_tss+max_seq_len/2))
-promoter_code = my_seq.get(target_interval)
-end_time = time.time()
-print(promoter_code)
-print(promoter_code.dtype)
-print(f"It took {end_time - start_time} seconds to run kipoiseq version.")
-"""

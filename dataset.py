@@ -185,24 +185,3 @@ class GenomeDataset(Dataset):
         return seq, input_tracks, mat1k
 
 
-
-"""
-import time
-input_tracklist = {('ctcf_log2fc.bw', None), ('atac.bw','log')}
-train_subset = GenomeDataset('/public/home/pku_yanglj/weijc/C.Origami-main/corigami_data/data/hg38/gm12878_1k_4195cleancools', input_tracklist, 'train', fold='fold1')
-val_subset = GenomeDataset('/public/home/pku_yanglj/weijc/C.Origami-main/corigami_data/data/hg38/gm12878_1k_4195cleancools', input_tracklist, 'validate', fold='fold1') 
-print(f'train_subset length is: {len(train_subset)}')
-print(f'val_subset length is: {len(val_subset)}')
-start_time = time.time()
-seq, input_tracks, mat1k = train_subset[0]
-print("access time:", time.time() - start_time)
-print(f'my seq_round1 is: {seq.shape}')
-print(seq)
-seq, input_tracks, mat1k = train_subset[0]
-print(f'my seq_round2 is: {seq.shape}')
-print(seq)
-print(f'my input_tracks is: {input_tracks[0].shape}')
-print(input_tracks)
-print(f'my mat1k is: {mat1k.shape}')
-print(mat1k)
-"""

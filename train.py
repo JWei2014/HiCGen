@@ -51,10 +51,10 @@ def init_parser():
     parser = argparse.ArgumentParser(description='Training parser.')
  
     parser.add_argument('--save_path', dest='save_path', default='checkpoints', help='Path to the model checkpoint')
-    parser.add_argument('--data-root', dest='dataset_root', default='../../corigami_data/data/hg38', help='Root path')
-    parser.add_argument('--celltype', dest='dataset_celltype', default='gm12878_1k_4195withoutICE', help='cell type for prediction')
+    parser.add_argument('--data-root', dest='dataset_root', default='../data', help='Root path')
+    parser.add_argument('--celltype', dest='dataset_celltype', default='sigmoid_colon', help='cell type for prediction')
     parser.add_argument('--fold', dest='fold', default='fold1', help='fold ID')  
-    parser.add_argument('--pred-mode', dest='pred_mode', default='SwinT4M', help='choose between SwinT4M, SwinT32M, Hyena4M, Hyena32M')
+    parser.add_argument('--pred-mode', dest='pred_mode', default='SwinT4M', help='SwinT4M or SwinT32M')
 
     parser.add_argument('--patience', dest='patience', default=60, type=int, help='Epoches before early stopping')
     parser.add_argument('--max-epochs', dest='trainer_max_epochs', default=100, type=int, help='Max epochs')
@@ -242,16 +242,12 @@ class TrainModule(pl.LightningModule):
 
     def get_dataloader(self, args):
         data_directory = f'{args.dataset_root}/{args.dataset_celltype}'
-        input_tracklist = [('ctcf_log2fc.bw', None), ('atac.bw','log')]  ## {('ctcf_log2fc.bw', None), ('atac.bw','log')}
+        input_tracklist = [('ctcf.bw', None), ('atac.bw','log')] 
 
         train_subset = GenomeDataset(data_directory, input_tracklist, model=args.pred_mode, mode='train', fold = args.fold)
         val_subset = GenomeDataset(data_directory, input_tracklist, model=args.pred_mode, mode='validate', fold = args.fold)
         test_subset = GenomeDataset(data_directory, input_tracklist, model=args.pred_mode, mode='test', fold = args.fold)
 
-        # Define batch size and number of workers per GPU
-        # gpus = args.trainer_num_gpu
-        # batch_size = int(args.dataloader_batch_size / gpus)
-        # num_workers = int(args.dataloader_num_workers / gpus)
         batch_size = args.dataloader_batch_size
         num_workers = args.dataloader_num_workers
                           

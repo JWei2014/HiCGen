@@ -106,7 +106,7 @@ def get_positional_embed(seq_len, feature_size, device):
 def relative_shift_swin(x):
     to_pad = torch.zeros_like(x[..., :1])
     x = torch.cat((to_pad, x), dim=-1)
-    h, _, window, t1, t2 = x.shape              ## JW TODO: it should be b, h, window, t1, t2?
+    h, _, window, t1, t2 = x.shape         
     x = x.reshape(h, -1, window, t2, t1)
     x = x[:, :, :, 1:, :]
     x = x.reshape(h, -1, window, t1, t2 - 1)
@@ -138,7 +138,7 @@ class CirculateSwinBlock(nn.Module):
         transformers = []
 
         for lay_num, reduce, squeeze, win_size in stage:
-            stage_transformers = []  # 用于临时存储当前stage的所有transformer 
+            stage_transformers = []  
             for i in range(lay_num):
                 reducing = False
                 if i == 0:
@@ -212,7 +212,7 @@ class Residual(nn.Module):
     
 
 class DWConv(nn.Module):
-    """Depthwise Convolution used in the Swin Transformer Block"""
+
     def __init__(self, dim, kernel_size=3):
         super(DWConv, self).__init__()
         self.dwconv = nn.Conv1d(
@@ -331,7 +331,7 @@ class SwinAttentionHelp(nn.Module):
         self.to_qkv = nn.Linear(dim, dim_key * 3 * heads, bias=False)
         self.to_out = nn.Linear(dim_key * heads, dim)
 
-        self.num_rel_pos_features = default(                                ## JW note: def default(num_rel_pos_features, d): return num_rel_pos_features if exists(num_rel_pos_features) else d
+        self.num_rel_pos_features = default(                                ## def default(num_rel_pos_features, d): return num_rel_pos_features if exists(num_rel_pos_features) else d
             num_rel_pos_features, dim_key * heads
         )
         self.rel_pos_embedding = nn.Linear(
@@ -402,18 +402,18 @@ class SwinAttentionHelp(nn.Module):
         else:
             if needs_padding:
                 padding_size = self.window_size - remainder
-                x = F.pad(x, (0, 0, 0, padding_size, 0, 0), value=0)            ## JW note: add padding_size at the bottom of the second dim
-                mask = create_padding_mask(b, remainder, padding_size, device)  ## JW note: mask the last window for output
+                x = F.pad(x, (0, 0, 0, padding_size, 0, 0), value=0)            ## add padding_size at the bottom of the second dim
+                mask = create_padding_mask(b, remainder, padding_size, device)  ## mask the last window for output
                 n += padding_size
         qkv = self.to_qkv(x)
         qkv = rearrange(qkv, "b n (h d k) -> k b h n d", h=self.heads, k=3)
-        q, k, v = qkv[0], qkv[1], qkv[2]                                        ## JW note: shape of q: (b h n d)
+        q, k, v = qkv[0], qkv[1], qkv[2]                                        ## shape of q: (b h n d)
 
         # Create sliding window indices                                         
         window_indices = torch.arange(
             0, n - self.window_size + 1, self.window_size, device=device
         )
-        q_windows = q[                                                          ## JW note: 此部分相当于切片操作，shape of q_windows: (b h n//window_size window_size dim_key)
+        q_windows = q[                                                          ## shape of q_windows: (b h n//window_size window_size dim_key)
             ...,
             window_indices.unsqueeze(-1)
             + torch.arange(self.window_size, device=device).unsqueeze(0),
@@ -435,11 +435,11 @@ class SwinAttentionHelp(nn.Module):
         ]
 
         # position
-        positions = get_positional_embed(            ## JW note: 当num_rel_pos_features=None, 输出shape为（window_size, dim_key * heads)
+        positions = get_positional_embed(           
             self.window_size, self.num_rel_pos_features, device
         )
         positions = self.pos_dropout(positions)
-        rel_k = self.rel_pos_embedding(positions)    ## JW note: 相当于过一个线性层，输出shape为（window_size, dim_key * heads)
+        rel_k = self.rel_pos_embedding(positions)   
         rel_k = rearrange(
             rel_k, "n (h d) -> h n d", h=self.heads, d=self.dim_key
         )
@@ -448,25 +448,25 @@ class SwinAttentionHelp(nn.Module):
         # (h,numWindows,windowSize, dimKey)
         rel_k = rel_k.unsqueeze(1).repeat(1, q_windows.shape[2], 1, 1)
 
-        k_windows = k_windows.transpose(-2, -1)      ## JW note: new shape of k_windows: (b h numWindows dim_key window_size)
-        content_attn = torch.matmul(                 ## JW note:  shape of content_attn: (b h numWindows window_size window_size)  TODO: 是否需要把torch.matmul替换为torch.einsum(见一言)？
-            q_windows + self.rel_content_bias,       ## JW note: self.rel_content_bias = nn.Parameter(torch.randn(1, heads, 1, 1, dim_key))
+        k_windows = k_windows.transpose(-2, -1)      ## new shape of k_windows: (b h numWindows dim_key window_size)
+        content_attn = torch.matmul(                 ## shape of content_attn: (b h numWindows window_size window_size)  
+            q_windows + self.rel_content_bias,       ## self.rel_content_bias = nn.Parameter(torch.randn(1, heads, 1, 1, dim_key))
             k_windows
             # q_windows,
             # k_windows,
         ) * (self.dim_key**-0.5)
 
         # calculate position attention         
-        rel_k = rel_k.transpose(-2, -1)             ## JW note: new shape of rel_k: (h, numWindows, dim_key, window_size)
+        rel_k = rel_k.transpose(-2, -1)             ## new shape of rel_k: (h, numWindows, dim_key, window_size)
 
-        rel_logits = torch.matmul(                  ## JW note:  shape of rel_logits: (b h numWindows window_size window_size)  TODO: 是否需要把torch.matmul替换为torch.einsum(见一言)？
-            q_windows + self.rel_pos_bias,          ## JW note: self.rel_pos_bias = nn.Parameter(torch.randn(1, heads, 1, 1, dim_key))
+        rel_logits = torch.matmul(                  ## shape of rel_logits: (b h numWindows window_size window_size) 
+            q_windows + self.rel_pos_bias,          ## self.rel_pos_bias = nn.Parameter(torch.randn(1, heads, 1, 1, dim_key))
             rel_k
             # q_windows,
             # rel_k,
         )
         # reshape position_attn to (b, h, n, w, w)
-        position_attn = relative_shift_swin(rel_logits)     # JW note:  shape of position_attn: (b h numWindows window_size (window_size+1)//2)   TODO: no need to include?
+        position_attn = relative_shift_swin(rel_logits)     # shape of position_attn: (b h numWindows window_size (window_size+1)//2)  
 
         attn = content_attn + position_attn
         if needs_padding:
@@ -478,9 +478,9 @@ class SwinAttentionHelp(nn.Module):
         attn = F.softmax(attn, dim=-1)
         attn = self.attn_dropout(attn)
 
-        out = torch.matmul(attn, v_windows)           # JW note:   (b h numWindows window_size window_size) * (b h numWindows window_size dim_key)  --> (b h n w d)
-        out = rearrange(out, "b h w n d -> b w n (h d)")   ## JW TODO: it should be b h n w d -> b n w (h d)?
-        out = self.to_out(out)           # JW note:  b n w (h dim_key) -> b n w dim
+        out = torch.matmul(attn, v_windows)           #   (b h numWindows window_size window_size) * (b h numWindows window_size dim_key)  --> (b h n w d)
+        out = rearrange(out, "b h w n d -> b w n (h d)")   
+        out = self.to_out(out)           #  b n w (h dim_key) -> b n w dim
         out = self.proj_dropout(out)
 
         out = rearrange(out, "b w n d -> b (w n) d")
