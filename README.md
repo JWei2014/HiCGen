@@ -25,7 +25,7 @@ HiCGen is a deep learning framework for predicting multiscale 3D genome organiza
 ### Setup
 1. Clone this repository:
    ```bash
-   git clone https://github.com/JiachenWei2014/HiCGen.git
+   git clone https://github.com/JWei2014/HiCGen.git
    cd HiCGen
 2. Install dependencies via conda:
    ```bash
