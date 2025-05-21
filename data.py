@@ -82,9 +82,10 @@ class HiCData():
 
 class HiCData_withoutCG(HiCData):
     def __init__(self, hic_path):
-        super(HiCData_withoutCG, self).__init__(hic_path)
-        print(f'Loading Hi-C: {hic_path}')
-        self.hic = self.load_hic(hic_path)
+        # super(HiCData_withoutCG, self).__init__(hic_path)
+        # print(f'Loading Hi-C: {hic_path}')
+        # self.hic = self.load_hic(hic_path)
+        super().__init__(hic_path)
 
     def get(self, chr_name, start, end):
         query = ((chr_name, start, end),)
