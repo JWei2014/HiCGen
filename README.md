@@ -3,7 +3,7 @@ a hierarchical and cell-type-specific genome organization generator
 
 HiCGen is a deep learning framework for predicting multiscale 3D genome organization (1 kb to 128 kb resolution) using DNA sequences and genomic features. Built on Swin-Transformer, HiCGen enables cross-cell-type predictions and *in silico* perturbation analysis to study structural consequences of genetic/epigenetic changes. 
 
-**Paper**: [BioRxiv Preprint](https://www.biorxiv.org/) | **Demo Data**: [Data link](docs/)
+**Paper**: [BioRxiv Preprint](https://www.biorxiv.org/content/10.1101/2025.05.25.656045v1/) | **Demo Data**: [Data link](docs/)
 
 ![HiCGen Overview](docs/overview.png)
 
